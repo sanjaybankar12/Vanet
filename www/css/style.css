@@ -1,0 +1,369 @@
+body{
+
+    background-image: url(../images/back.jpg);
+    background-size: 380px,800px;
+    display: flex;
+    min-height: 100vh;
+    background-repeat: repeat;
+    flex-direction: column;
+    background-color: #333;
+
+}
+#locimg
+{
+    
+}
+
+main {
+    flex: 1 0 auto;
+}
+img{
+    width: 100%;
+    height: auto;
+}
+p{
+    margin: 0px;
+}
+.no-margin{
+margin-left:0px;
+margin-right:0px;
+}
+.ntop-margin{
+margin-top:0px !important;
+}
+
+.nb-margin{
+margin-bottom:0px !important;
+}
+.t10-margin{
+    margin-top: 15px !important;
+}
+#vikasid{
+    margin-bottom: 50px !important;
+}
+
+#slide-out
+{
+    width: 55%;
+}
+
+.img_box{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    margin: 20% auto 20px;
+}
+.app-name{
+    text-align: center;
+}
+.app-name h2{
+    margin: 40px auto 0px;
+    color: #fff;
+    text-shadow: 1px 3px 7px #013940, 0 0 0 #017786, 1px 3px 8px #013940;
+}
+.heading{
+    background:#00bcd4;
+    padding: 10px 0px;
+   
+}
+.heading h2{
+    margin: 0px;
+    font-size: 24px;
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0px 0px 1px #000;
+}
+.s_btn{
+    margin: 30px auto;
+    text-align: center;
+}
+.s_btn a{
+    background: #F44336;
+    font-size: 18px;
+}
+.header{
+    min-height: 40px;
+    width: 100%;
+    text-align: center;
+    background: #00bcd4 !important;
+}
+.cyan {
+    background-color: #00bcd4 !important;
+}
+#header{
+    display: block;
+        text-align: center;
+
+}
+.navbar-fixed nav {
+    position: fixed;
+    background-color: #00bcd4 !important;
+}
+.nav-btn{
+    margin-top: 0px;
+    padding: 0px 10px 0px 10px;
+    line-height: 10px;
+    font-size: 20px;
+    display: inline-block;
+    float: left;
+}
+.head-title{
+    display: inline-block;
+    width: 80%;
+    margin:  16px auto 16px auto;
+    font-size: 24px;
+    text-align: center;
+    color: #fff;
+        text-shadow: 0px 2px 3px #000;
+}
+.info-grid{
+    background: rgba(255,255,255,0.3);
+    margin: 5px auto;
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    border: 4px solid #fff;
+}
+.overlay-bg{
+
+    background: rgba(0,188,212,0.7);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+.content{
+    overflow-x: hidden;
+ 
+}
+.content-box{
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+}
+.content-box h3{
+    font-size: 16px;
+}
+.info-heading{
+    background:#424242;
+    text-align: center;
+    color: #D84315;
+    font-size: 20px;
+}
+.page-heading{
+    background: rgba(0,0,0,0.6);
+    text-align: center;
+}
+.ph-title{
+    margin: 15px auto;
+    font-size: 24px;
+    font-weight: bold;
+    color: #00BCD4;
+
+}
+.phone-list{
+    min-height: 55px !important;
+}
+.phone-list span{
+display: block;
+}
+.contact-icon{
+       background-color: #00bcd4 !important;
+}
+.personal-info{
+    background-image: url(../images/rd.jpg);
+    background-size: cover;
+
+}
+.name-text h3 {
+font-size:10px;
+}
+.ladis-info
+{
+    background-image: url(../images/stop.jpg);
+    background-size: cover;
+}
+#job_listid{
+text-align:center;
+
+}
+.job-info
+{
+    background-image: url(../images/news1.jpg);
+    background-size: cover;
+}
+.cmp-info
+{
+    background-image: url(../images/complaints.jpg);
+    background-size: cover;
+}
+.vikas-info
+{
+    background-image: url(../images/vikas.png);
+    background-size: cover;
+}
+.contact-info
+{
+    background-image: url(../images/phone.jpg);
+    background-size: cover;
+}
+.phone-wrap {
+    min-height: 200px;
+    background: #469ba7;
+    color: #fff;
+    text-align: center;
+}
+#cont_listid li p{
+color:#469ba7;
+}
+.icon-contact{
+    width: 80px;
+    height: 80px;
+    border: 2px solid #fff;
+    margin: 25px auto;
+    border-radius: 50%;
+}
+.icon-contact i{
+line-height: 71px;
+}
+.phone-wrap h2{
+    font-size: 20px;
+
+}
+.person_pic{
+    /*    background:rgba(10,10,10,0.6);*/
+    text-align: center;
+
+}
+.user_photo{
+    width: 250px;
+    height: 250px;
+    margin: 0px auto;
+    z-index: 999;
+}
+.slogan_box{
+    text-align: center;
+}
+.slogan_box h3{
+    font-size: 26px;
+
+}
+.name-heading{
+    background: rgba(0,0,0,0.4);
+    text-align: center;
+    padding: 10px 0px;
+}
+.name-heading h2{
+    font-size: 25px;
+    margin: 0px;
+    color: #00BCD4;
+}
+.name-text{
+    text-align: center;
+    color: #FFC107;
+}
+.b40-margin{
+margin-bottom:40px !important;
+}
+.name-text h3{
+    margin: 10px;
+    font-size: 22px;
+}
+.side-nav{
+    text-align: center;
+}
+.side-nav li {
+    padding: 0px
+}
+.side-nav li:hover a{
+    background: transparent;
+}
+.userView a{
+    text-decoration: none;
+    padding: 0px;
+
+}
+.userView .circle{
+    width: 64px;
+    height: 64px;
+    margin-top: 10px;
+}
+.gallery-box{
+    margin: 10px auto;
+}
+.o-text{
+    color: #673AB7;
+}
+.card-title {
+    color: #FF5722 !important;
+}
+input[type=text],input[type=email],select{
+    border-bottom: 1px solid #fff;
+    color: #fff;
+}
+textarea.materialize-textarea {
+    border-bottom: 1px solid #fff; 
+    color: #fff;
+}
+input[type=text]:focus{
+    border-bottom: 1px solid #ff4081 !important;
+}
+.input-field label, .input-field i{
+    color: #fff;
+}
+input[type=text]:focus label{
+    color: #ff4081;
+}
+.validation-error{
+    color: red;
+    display: inline-block;
+}
+#register_page{
+    overflow-y: hidden;
+}
+#esub_but{
+margin-top:10px;
+}
+footer{
+    background-color: #00a4b7;
+}
+.sticky-footer{
+    color: #fff;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    min-height: 50px;
+}
+.sticky-footer h1{
+margin: 5px auto;
+    font-size: 22px;
+    margin: 10px;
+}
+.f-icon-wrap{
+    position: absolute;
+    right: 10px;
+    top: -22px;
+}
+.f-icon{
+    width: 60px;
+}
+#filepath_id{
+border-color:#fff !important;
+color:#fff;
+}
+@media (min-width: 360px) and (max-width: 640px) {
+.f-icon-wrap{
+    
+    right: 10px;
+  
+}
+}
+
+@media (min-width: 320px) and (max-width: 480px) {
+.sticky-footer h1{
+    font-size: 18px;
+}
+
+}

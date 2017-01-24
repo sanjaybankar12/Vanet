@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+<!--
+  * Please see the included README.md file for license terms and conditions.
+  -->
+<head>
+    <title>Blank Cordova Mobile App Project Template (Lite)</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <!-- see http://webdesign.tutsplus.com/tutorials/htmlcss-tutorials/quick-tip-dont-forget-the-viewport-meta-tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <style>
+        /* following two viewport lines are equivalent to the meta viewport statement above, needed for Windows */
+        /* see http://www.quirksmode.org/blog/archives/2014/05/html5_dev_conf.html and http://dev.w3.org/csswg/css-device-adapt/ */
+        @-ms-viewport { width: 100vw ; zoom: 100% ; }  @viewport { width: 100vw ; zoom: 100% ; }
+        @-ms-viewport { user-zoom: fixed ; }           @viewport { user-zoom: fixed ; }
+    </style>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/modal.css" rel="stylesheet">
+    <link href="css/icons.css" rel="stylesheet">
+     <link rel="stylesheet" href="css/materialize.min.css"/> <!-- materilize css lib file -->
+     <link rel="stylesheet" href="css/style.css"/> <!-- customecss lib file -->
+    <script src="cordova.js"></script>          <!-- phantom library, needed for Cordova api calls, added during build -->
+    <script src="js/app.js"></script>           <!-- recommended location of your JavaScript code relative to other JS files -->
+      <script src="js/jquery-2.1.1.js"></script>  
+    <script src="js/materialize.min.js"></script>           <!-- materilize design lib file -->
+    <script src="xdk/init-dev.js"></script>     <!-- normalizes device and document ready events, see README for details -->
+    <script src="js/db.js"></script>
+    <script src="js/bootstrap.min.js" type="application/javascript"></script>
+    <script>
+        $(document).ready(function()
+        {
+            document.addEventListener("deviceready",onReady,false);
+            
+            function onReady()
+            {                
+                navigator.splashscreen.hide();
+                init_client();
+                var usloc=localStorage.getItem("uscurloc");
+                var uslatlng=localStorage.getItem("uslatlng");
+               
+                if(usloc==null)
+                {
+                   
+                    $("#loc_but_cvr").slideDown('slow');
+                    $("#start_but_cvr").slideUp('slow');      
+                }
+                else
+                {
+                    $("#addr").text(usloc);
+                    $("#startloc").text("("+uslatlng+")");
+                    $("#loc_but_cvr").slideUp('slow');
+                    $("#start_but_cvr").slideDown('slow');  
+
+                }
+                
+                WifiWizard.setWifiEnabled(true,function(success){ },function(error){ 
+                    navigator.notification.alert("Unable to start Wifi Service automatically, Start it manually.",function(){ },"Warning","Ok");
+                });
+                        
+                document.addEventListener("backbutton",onBack,false);
+            }
+
+            function onBack()
+            {
+                navigator.notification.confirm("Do you want to exit app?",onExit);
+            }
+            
+            function onExit(buttonIndex)
+            {
+                if(buttonIndex===1)
+                {
+                    WifiWizard.setWifiEnabled(false,function(success){ },function(error){ 
+                        navigator.notification.alert("Unable to stop Wifi Service automatically, Stop it manually.",function(){ },"Warning","Ok");
+                    });
+                    navigator.app.exitApp();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+                        
+            $("#loc_but").click(function()
+            {
+                if(navigator.connection.type!=Connection.NONE)
+                {
+                    cordova.plugins.locationAccuracy.canRequest(function(canRequest)
+                    {
+                        if(canRequest)
+                        {
+                            cordova.plugins.locationAccuracy.request(function(success)
+                            {
+                                $("#proc").slideDown('slow');
+                                navigator.geolocation.getCurrentPosition(onSuccess,onError,{enableHighAccuracy:true});
+
+                            },function(error)
+                            {
+                                if(error.code !==cordova.plugins.locationAccuracy.ERROR_USER_DISAGREED)
+                                {
+                                    if(window.confirm("Failed to automatically set Location Mode to 'High Accuracy'. Would you like to switch to the Location Settings page and do this manually?"))
+                                    {
+                                        cordova.plugins.diagnostic.switchToLocationSettings();
+                                    }
+                                    else
+                                    {
+                                        navigator.app.exitApp();
+                                    }
+                                }
+                                else
+                                {
+                                    navigator.app.exitApp();
+                                }
+
+                            },cordova.plugins.locationAccuracy.REQUEST_PRIORITY_HIGH_ACCURACY);
+                        }
+                    });
+                }
+                else
+                {
+                    navigator.notification.alert("Internet must to be proceed.",function(){ },"Warning","Ok");
+                }
+                
+            });
+            
+            function onSuccess(position)
+            {                
+                var long=position.coords.longitude;
+                var lat=position.coords.latitude;
+                var latlng=long+","+lat;
+                var address=lat+","+long;
+                $.getJSON("https://maps.googleapis.com/maps/api/geocode/json?latlng="+address+"&key=AIzaSyAq9M_EQ2sEZxZEDglO00lnqKSnCE1RMWk",function(response){
+                    
+                    var loc=response.results[0].formatted_address;
+                    localStorage.setItem("uscurloc",loc);
+                    
+                    $("#addr").text(loc);
+                
+                });
+                localStorage.setItem("source_long",long);
+                localStorage.setItem("source_lat",lat);
+                $("#startloc").text("("+long+", "+lat+")");
+                localStorage.setItem("uslatlng",latlng);
+                
+                $("#loc_but_cvr").slideUp('slow');
+                $("#proc").slideUp('slow');
+                $("#start_but_cvr").slideDown('slow');                
+            }
+            
+            function onError(error)
+            {
+                //alert(error.message);
+            }
+            var up=false;
+            $("#showhidebut").click(function()
+            {
+                $("#fullsize").slideToggle('slow');
+                $("#traffic_rule_cvr").slideToggle('slow');
+                if(up)
+                {
+                    $(this).children("i").removeClass("mdi-hardware-keyboard-arrow-up");
+                    $(this).children("i").addClass("mdi-hardware-keyboard-arrow-down");
+                    up=false;
+                }
+                else
+                {
+                    $(this).children("i").removeClass("mdi-hardware-keyboard-arrow-down");
+                    $(this).children("i").addClass("mdi-hardware-keyboard-arrow-up");
+                    up=true;
+                }
+            });
+            
+            $("#logout").click(function()
+            {
+                navigator.notification.confirm("Do you want to logout?",function(buttonIndex){
+                    
+                    if(buttonIndex==1)
+                    {
+                        window.location.href="login.html";
+                    }
+                    
+                },"Confirm",["Yes","No"]);
+            });
+            
+            onLoad();
+            function onLoad()
+            {
+                for(var i=2;i<26;i++)
+                {
+                    var img=document.createElement("img");
+                    var nm=i<10?"0"+i:i;
+                    img.src="docs/Rules_of_the_road-0"+nm+".jpg";
+                    
+                    $("#traffic_rule_cvr").append(img);
+                }
+            }
+            
+            $("#fullsize").click(function()
+            {
+                window.location.href="full.html";
+            });
+            
+            $("#start_but").click(function()
+            {
+                if(navigator.connection.type!=Connection.NONE)
+                {
+                    $("#destloc_modal").modal('show');                                       
+                }
+                else
+                {
+                    navigator.notification.alert("Internet must to be proceed.",function(){ },"Warning","Ok");
+                }
+            });     
+            
+            $("#setdestbut").click(function()
+            {
+                var val=$.trim($("#destaddr").val());
+                if(val!="")
+                {
+                    localStorage.setItem("destaddres",val);
+                    
+                    var startdate=new Date().toLocaleDateString();
+                    var starttime=new Date().toLocaleTimeString();
+                    localStorage.setItem("startdate",startdate);
+                    localStorage.setItem("starttime",starttime);
+                          
+                    window.location.href="travel.html";
+                }
+                else
+                {
+                    navigator.notification.alert("Destination must to be proceed.",function(){ },"Warning","Ok");
+                }
+            });
+            
+            $("#ride_hist_but").click(function()
+            {
+                window.location.href="info.html";
+            });
+                       
+        });
+    </script>
+    <style>
+        .hm_cvr
+        {
+            margin: 0;
+        }
+        header
+        {
+            margin: 0 auto;
+            text-align: center;
+            top:0;
+            position: fixed;
+            width: 100%;
+            height: 60px;
+            z-index: 5;
+        }
+        header i
+        {
+            float: right;
+        }
+        header h3
+        {
+            font-size: 26px;
+            font-weight: bold;
+            margin: 0;
+            padding: 4%;
+        }
+        .mid_cvr
+        {
+            width: 90%;
+            margin: 2% auto;
+            text-align: center;
+            margin-top: 80px;
+        }
+        #start_but,#loc_but
+        {
+            width: 100%;
+            margin: 0 auto;
+        }                
+        
+        #proc
+        {
+            
+            display: none;
+        }
+        #proc h5
+        {
+            
+            font-size: 18px;
+        }
+        #proc img
+        {
+            width: 50%;
+            margin: 2% auto;
+        }
+        .mid_cvr h5
+        {
+            color: #fff;
+            font-size: 22px;
+        }
+        
+        #addr
+        {
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+        }
+         #startloc
+        {
+            color: #fff;
+            font-size: 20px;
+        }
+        
+        #loc_but_cvr img,#start_but_cvr img
+        {
+            height: 170px;
+        }
+        
+        #start_but_cvr
+        {
+            display: none;
+        }
+        
+        #traffic_rule_cvr
+        {
+            width: 100%;
+            margin: 0 auto;
+            height: 240px;
+            overflow-y: scroll;
+            display: none;
+        }
+        #fullsize
+        {
+            width: 100%;
+            margin: 0 auto;
+            display: none;
+        }
+        #showhidebut
+        {
+            width: 100%;
+            margin: 0 auto;
+        }
+        #locimg
+        {
+            height: 170px;
+            background-image: url(images/loc.png);
+        }
+        #startdrive_cvr
+        {
+            height: 170px;
+            background-image: url(images/startdriving.jpe);
+        }
+        .hd
+        {
+            font-weight: bold;
+            font-size: 21px;
+            color: #fff;
+        }
+        #ride_hist_but
+        {
+            width: 100%;
+            margin: auto;
+        }
+        #ride_hist_but_cvr
+        {
+            height: 170px;
+            background-image: url(images/bmw.png);
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hm_cvr">
+        <header class="green">
+            <div >
+                <h3>&nbsp;&nbsp;&nbsp;&nbsp;Vanet System<i id="logout" class="mdi-action-settings-power"></i></h3>
+            </div>
+        </header>
+        <section class="mid_cvr">
+            <div id="loc_but_cvr" class="row">
+                <div class="">
+                    <div id="locimg"></div>
+                    <button id="loc_but" type="button" class="waves-effect btn red">Get Location</button>
+                </div>
+            </div>
+             <div id="proc" class="row">
+                <h5>Plz. wait, getting your current location</h5>
+                <img src="images/proc.gif" alt="Searching..."/>                
+            </div>
+            
+            <div style="text-align:center;" class="row">
+                <div id="start_but_cvr" style="margin-bottom:20px;" class="">
+                    <div class="row">
+                        <div class="hd">Current Location</div>
+                        <div id="addr"></div>
+                        <div id="startloc"></div>
+                    </div>
+                    <div id="startdrive_cvr"></div>
+                    <button id="start_but" type="button" class="waves-effect btn red">Start Driving</button>
+                </div>
+                <div style="margin:0px auto 20px auto;">
+                    <div id="ride_hist_but_cvr"></div>
+                    <button type="button" id="ride_hist_but" class="btn green">Ride History</button>
+                </div>
+                <button id="showhidebut" type="button" class="waves-effect btn red"><i class="mdi-hardware-keyboard-arrow-down"></i></button>
+                <div id="traffic_rule_cvr" class="">
+                </div>
+                <button id="fullsize" type="button" class="waves-effect btn red">See Full Size</button>
+            </div>          
+        </section>
+        
+    </div>
+    
+    <div id="destloc_modal" class="modal fade" aria-hidden="true" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">X</button>
+                    <h3>Enter Destination</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="mdi-communication-location-on prefix"></i>
+                            <input type="text" id="destaddr" name="destaddr"/>
+                            <label for="destaddr" class="left-align">Destination</label>
+                        </div>
+                    </div>
+                    <div class="row center-align">
+                        <button id="setdestbut" type="button" class="waves-effect btn green">Set <i class="mdi-content-send"></i></button>
+
+                    </div>
+                </div>
+                <div class="modal-footer center-align">
+                    <span>Set your destination to travel, This application maintain all your traveling details.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+</body>
+</html>
+

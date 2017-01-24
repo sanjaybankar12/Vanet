@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<!--
+  * Please see the included README.md file for license terms and conditions.
+  -->
+<head>
+    <title>Blank Cordova Mobile App Project Template (Lite)</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <!-- see http://webdesign.tutsplus.com/tutorials/htmlcss-tutorials/quick-tip-dont-forget-the-viewport-meta-tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <style>
+        /* following two viewport lines are equivalent to the meta viewport statement above, needed for Windows */
+        /* see http://www.quirksmode.org/blog/archives/2014/05/html5_dev_conf.html and http://dev.w3.org/csswg/css-device-adapt/ */
+        @-ms-viewport { width: 100vw ; zoom: 100% ; }  @viewport { width: 100vw ; zoom: 100% ; }
+        @-ms-viewport { user-zoom: fixed ; }           @viewport { user-zoom: fixed ; }
+    </style>
+    <link href="css/icons.css" rel="stylesheet">
+     <link rel="stylesheet" href="css/materilize.css"/> <!-- materilize css lib file -->
+     <link rel="stylesheet" href="css/style.css"/> <!-- customecss lib file -->
+    <script src="cordova.js"></script>          <!-- phantom library, needed for Cordova api calls, added during build -->
+    <script src="js/app.js"></script>           <!-- recommended location of your JavaScript code relative to other JS files -->
+      <script src="js/jquery-2.1.1.js"></script>  
+    <script src="js/materilize.js"></script>           <!-- materilize design lib file -->
+    <script src="xdk/init-dev.js"></script>     <!-- normalizes device and document ready events, see README for details -->
+    <script src="js/db.js"></script>
+    <script>
+        $(document).ready(function()
+        {
+            document.addEventListener("deviceready",onReady,false);
+        
+            function onReady()
+            {                       
+                navigator.splashscreen.hide();
+                init_client();
+                
+                document.addEventListener("backbutton",onBack,false);
+            }
+
+            function onBack()
+            {
+               window.location.href="home.html";
+            }
+            
+            onLoad();
+            function onLoad()
+            {
+                for(var i=2;i<26;i++)
+                {
+                    var img=document.createElement("img");
+                    var nm=i<10?"0"+i:i;
+                    img.src="docs/Rules_of_the_road-0"+nm+".jpg";
+                    
+                    $("#traffic_rule_cvr").append(img);
+                }
+            }
+                
+          
+        });
+    </script>
+   <style>
+       #traffic_rule_cvr
+       {
+           width: 100%;
+       }
+</style>
+</head>
+<div id="traffic_rule_cvr" class="input-field col s12">
+               
+</div>
+<body>
+   
+</body>
+</html>

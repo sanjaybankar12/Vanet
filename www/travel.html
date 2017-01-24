@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<!--
+  * Please see the included README.md file for license terms and conditions.
+  -->
+<head>
+    <title>Blank Cordova Mobile App Project Template (Lite)</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <!-- see http://webdesign.tutsplus.com/tutorials/htmlcss-tutorials/quick-tip-dont-forget-the-viewport-meta-tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <style>
+        /* following two viewport lines are equivalent to the meta viewport statement above, needed for Windows */
+        /* see http://www.quirksmode.org/blog/archives/2014/05/html5_dev_conf.html and http://dev.w3.org/csswg/css-device-adapt/ */
+        @-ms-viewport { width: 100vw ; zoom: 100% ; }  @viewport { width: 100vw ; zoom: 100% ; }
+        @-ms-viewport { user-zoom: fixed ; }           @viewport { user-zoom: fixed ; }
+    </style>
+    <link href="css/icons.css" rel="stylesheet">
+     <link rel="stylesheet" href="css/materilize.css"/> <!-- materilize css lib file -->
+     <link rel="stylesheet" href="css/style.css"/> <!-- customecss lib file -->
+    <script src="cordova.js"></script>          <!-- phantom library, needed for Cordova api calls, added during build -->
+    <script src="js/app.js"></script>           <!-- recommended location of your JavaScript code relative to other JS files -->
+      <script src="js/jquery-2.1.1.js"></script>  
+    <script src="js/materilize.js"></script>           <!-- materilize design lib file -->
+    <script src="xdk/init-dev.js"></script>     <!-- normalizes device and document ready events, see README for details -->
+    <script src="js/db.js"></script>
+    <script>
+        $(document).ready(function()
+        {
+            document.addEventListener("deviceready",onReady,false);
+        
+            function onReady()
+            {                       
+                navigator.splashscreen.hide();
+                init_client();
+                
+                loadMap();
+                
+                WifiWizard.setWifiEnabled(true,function(success){ },function(error){ 
+                    navigator.notification.alert("Unable to start Wifi Service automatically, Start it manually.",function(){ },"Warning","Ok");
+                });
+                
+                navigator.geolocation.watchPosition(function(position){
+                    
+                    if(navigator.connection.type!=Connection.NONE)
+                    {
+                        var long=position.coords.longitude;
+                        var lat=position.coords.latitude;
+                        var msg=localStorage.getItem("broadcastmsg");
+                        var vehno=localStorage.getItem("vehno");
+                        $("#bmsg").children("marquee").text(msg);
+                        var uid=device.uuid;
+                        
+                        $.post("http://www.sanjaybankar.co.in/ieeeprojects/vanetsystem/scandata.php",{"uid":uid,"vehno":vehno,"long":long,"lat":lat,"msg":msg},function(response){
+                             
+                            if(response.type=="success")
+                            {
+                                var vehnoarr=response.vehnoarr;
+                                var longarr=response.longarr;
+                                var latarr=response.latarr;
+                                var msgarr=response.msgarr;
+                                
+                                $("#alert_tabbody").children("tr").remove();
+                                for(var i=0;i<vehnoarr.length;i++)
+                                {
+                                    var distance_veh=getDistance(long,lat,longarr[i],latarr[i]);
+                                    
+                                    if(+distance_veh<40000)
+                                    {
+                                        var rw="<tr><td>"+vehnoarr[i]+"</td><td>"+distance_veh+"<br/><marquee>"+msgarr[i]+"</marquee></td></tr>";
+                                        
+                                        $("#alert_tabbody").append(rw);
+                                    }
+                                }
+                            }
+                                     
+                        });
+                    }
+                    
+                },function(error){ },{enableHighAccuracy:true});
+                
+                document.addEventListener("backbutton",onBack,false);
+                               
+            }
+
+            function onBack()
+            {
+                window.location.href="home.html";
+            }
+            
+            function loadMap()
+            {
+                var startloc=localStorage.getItem("uscurloc");
+                var stoploc=localStorage.getItem("destaddres");
+                
+                $("#drivemap").prop("src","https://www.google.com/maps/embed/v1/directions?key=AIzaSyCirXo6GUk6jfQW7e89sB6gfEpvpFmiwDY&origin="+startloc+"&destination="+stoploc+"&avoid=tolls|highways");
+              
+            }                       
+            
+            $("#logout").click(function()
+            {
+                navigator.notification.confirm("Do you want to logout?",function(buttonIndex){
+                    
+                    if(buttonIndex==1)
+                    {
+                        window.location.href="login.html";
+                    }
+                    
+                },"Confirm",["Yes","No"]);
+            });
+            
+            $("#stop_but").click(function()
+            {
+                if(navigator.connection.type!=Connection.NONE)
+                {      
+                    navigator.notification.confirm("Do you want to stop driving?",function(buttonIndex){
+                        
+                        if(buttonIndex==1)
+                        {
+                            window.location.href="proc.html";
+                        }
+                    },"Confirm",["Yes","No"]);
+                    
+                }
+                else
+                {
+                    navigator.notification.alert("Internet must to be proceed.",function(){ },"Warning","Ok");
+                }
+            });
+           
+            function rad(x) {
+              return x * Math.PI / 180;
+            }
+
+            function getDistance(sourcelong,sourcelat,destlong,destlat) 
+            {
+                var R = 6378137;
+                var dLat = rad(destlat - sourcelat);
+                var dLong = rad(destlong - sourcelong);
+                
+                var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +Math.cos(rad(sourcelat)) * Math.cos(rad(destlat)) * Math.sin(dLong / 2) * Math.sin(dLong / 2);
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                var d = R * c;
+                return d; 
+            }
+            
+            
+            $("#show_but").click(function()
+            {
+                $("#setmsgcvr").slideDown('slow');
+                $("#show_but_cvr").slideUp('slow');
+                
+            });
+            
+            $("#up_but").click(function()
+            {
+                $("#show_but_cvr").slideDown('slow');
+                $("#setmsgcvr").slideUp('slow');
+                
+            });
+            
+            $("#set_but").click(function()
+            {
+                var msg=$.trim($("#msg").val());
+                if(msg!="")
+                {
+                    localStorage.setItem("broadcastmsg",msg);
+                    $("#msg").val('');
+                    $("#show_but_cvr").slideDown('slow');
+                    $("#setmsgcvr").slideUp('slow');
+                }
+                else
+                {
+                    navigator.notification.alert("Enter message to send over network.",function(){ },"Warning","Ok");
+                }
+            });
+            
+        });
+    </script>
+    <style>
+       
+        .hm_cvr
+        {
+            margin: 0;
+        }
+        header
+        {
+            margin: 0 auto;
+            text-align: center;
+            top:0;
+            position: fixed;
+            width: 100%;
+            height: 60px;
+            z-index: 5;
+        }
+        header i
+        {
+            float: right;
+        }
+        header h3
+        {
+            font-size: 26px;
+            font-weight: bold;
+            margin: 0;
+            padding: 4%;
+        }
+        .mid_cvr
+        {
+            width: 90%;
+            margin: 2% auto;
+            text-align: center;
+            margin-top: 80px;
+        }
+        #drivemap
+        {
+            width: 100%;
+            height: 220px;
+        }
+        #wifiscan
+        {
+            width: 20%;
+            float: left;
+        }
+        #setinfo_but
+        {
+            margin: 0% auto;
+        }
+       
+        #setmsgcvr
+        {
+            display: none;
+        }
+        table
+        {
+            background-color: #fff;
+            
+        }
+       
+        #alert_tabbody tr td
+        {
+            text-align: center;
+            font-weight: bold;
+            color: royalblue;
+        }
+        #alert_tabbody tr td marquee
+        {
+            color: red;
+        }
+         #alert_tabbody tr
+        {
+            border-bottom: 1px solid green;
+            background-color: #eee;
+        }
+    </style>
+</head>
+
+<body>
+   <div class="hm_cvr">
+        <header class="green">
+            <div ><img id="wifiscan" src="images/wifi.gif" alt="Scanning..."/>
+                <h3>Vanet System&nbsp;<i id="logout" class="mdi-action-settings-power"></i></h3>
+            </div>
+        </header>
+        <section class="mid_cvr">
+            <div>
+                <iframe id="drivemap" src=""></iframe>
+            </div>
+            <div style="margin:5px auto;" class="row">
+                <button id="stop_but" type="button" class="btn red">Stop Driving</button>&nbsp;&nbsp;
+                <span id="show_but_cvr"><button id="show_but" type="button" class="btn red"><i class="mdi-communication-email prefix"></i>&nbsp;&nbsp;&nbsp;<i class="mdi-content-send prefix"></i></button></span>
+            </div>
+            <div id="bmsg" class="white-text">
+                <p>Your Broadcasted message is visible within 40km</p>
+                <marquee style="font-weight:bold;" scrollamount="3">Set your broadcasted message if any</marquee>
+            </div>
+            <div id="setmsgcvr" class="row">
+                <div class="input-field col s12">
+                    <i class="mdi-communication-email prefix"></i>
+                    <input type="text" name="msg" id="msg"/>
+                    <label for="msg" class="center-align">Message</label>
+                </div>
+                <button id="set_but" type="button" class="btn red">Set Message</button>&nbsp;&nbsp;
+                <button id="up_but" type="button" class="btn red"><i class="mdi-maps-navigation prefix"></i></button>
+            </div>            
+            <div style="border-radius:5px; background-color:#fff; padding:10px;" class="row">
+                <table class="table-bordered table-centered">
+                    <thead>
+                        <tr class="green">
+                            <th style="font-size:16px;" class="center-align">Vehicle No.</th>
+                            <th style="font-size:16px;" class="center-align">Distance (in m)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alert_tabbody">
+                     
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+      
+    </div>
+    
+    
+</body>
+</html>

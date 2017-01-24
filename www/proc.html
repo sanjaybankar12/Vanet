@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<!--
+  * Please see the included README.md file for license terms and conditions.
+  -->
+<head>
+    <title>Blank Cordova Mobile App Project Template (Lite)</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <!-- see http://webdesign.tutsplus.com/tutorials/htmlcss-tutorials/quick-tip-dont-forget-the-viewport-meta-tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <style>
+        /* following two viewport lines are equivalent to the meta viewport statement above, needed for Windows */
+        /* see http://www.quirksmode.org/blog/archives/2014/05/html5_dev_conf.html and http://dev.w3.org/csswg/css-device-adapt/ */
+        @-ms-viewport { width: 100vw ; zoom: 100% ; }  @viewport { width: 100vw ; zoom: 100% ; }
+        @-ms-viewport { user-zoom: fixed ; }           @viewport { user-zoom: fixed ; }
+    </style>
+    <link href="css/icons.css" rel="stylesheet">
+     <link rel="stylesheet" href="css/materilize.css"/> <!-- materilize css lib file -->
+     <link rel="stylesheet" href="css/style.css"/> <!-- customecss lib file -->
+    <script src="cordova.js"></script>          <!-- phantom library, needed for Cordova api calls, added during build -->
+    <script src="js/app.js"></script>           <!-- recommended location of your JavaScript code relative to other JS files -->
+      <script src="js/jquery-2.1.1.js"></script>  
+    <script src="js/materilize.js"></script>           <!-- materilize design lib file -->
+    <script src="xdk/init-dev.js"></script>     <!-- normalizes device and document ready events, see README for details -->
+    <script src="js/db.js"></script>
+    <script>
+        $(document).ready(function()
+        {
+            document.addEventListener("deviceready",onReady,false);
+        
+            function onReady()
+            {                       
+                navigator.splashscreen.hide();
+                init_client();
+                
+                navigator.geolocation.getCurrentPosition(onSuccess,onError,{enableHighAccuracy:true});
+                
+                document.addEventListener("backbutton",onBack,false);
+            }
+
+            function onBack()
+            {
+                navigator.notification.confirm("Plz wait...",function(){ },"Warning","Ok");
+            }
+            
+             function onSuccess(position)
+            {
+                var uid=device.uuid;
+                var enddate=new Date().toLocaleDateString();
+                var endtime=new Date().toLocaleTimeString();
+                var destlong=localStorage.getItem("dest_long");
+                var destlat=localStorage.getItem("dest_lat");
+                    
+                var startdate=localStorage.getItem("startdate");
+                var starttime=localStorage.getItem("starttime");
+                var sourcelong=localStorage.getItem("source_long");
+                var sourcelat=localStorage.getItem("source_lat");
+                
+                var destlong=position.coords.longitude;
+                var destlat=position.coords.latitude;
+                
+                localStorage.setItem("dest_long",destlong);
+                localStorage.setItem("dest_lat",destlat);
+                var distance=getDistance(sourcelong,sourcelat,destlong,destlat);
+                
+                var vehno=localStorage.getItem("vehno";
+                
+                $.ajax({
+                        type:"POST",
+                        url:"http://sanjaybankar.co.in/ieeeprojects/vanetsystem/drivinginfo.php",
+                        data:{"uid":uid,"vehno":vehno,"startdate":startdate,"starttime":starttime,"sourcelong":sourcelong,"sourcelat":sourcelat,"enddate":enddate,"endtime":endtime,"destlong":destlong,"destlat":destlat,"distance":distance},
+                        datatype:"json",
+                        success:function(response,testStatus,jqXHR)
+                        {
+                            if(response.type=="success")
+                            {
+                                storeDrivingInfo(uid,startdate,starttime,sourcelong,sourcelat,enddate,endtime,destlong,destlat,distance);
+                            }
+                            else
+                            {
+                                navigator.notification.alert("Due to server problem data unable to upload at the Server, Do you want to Proceed?",function(){ },"Message","Ok");
+                                storeDrivingInfo(uid,startdate,starttime,sourcelong,sourcelat,enddate,endtime,destlong,destlat,distance);
+                            }
+                        },
+                        error:function(response,testStatus,jqXHR)
+                        {
+                            navigator.notification.alert("Due to server problem data unable to upload at the Server, Do you want to Proceed?",function(){ },"Message","Ok");
+                            storeDrivingInfo(uid,startdate,starttime,sourcelong,sourcelat,enddate,endtime,destlong,destlat,distance);
+                        }
+                  });
+                
+            }
+            
+            function onError(error)
+            {
+                
+            }
+            
+            function rad(x) {
+              return x * Math.PI / 180;
+            }
+
+            function getDistance(sourcelong,sourcelat,destlong,destlat) 
+            {
+                var R = 6378137;
+                var dLat = rad(destlat - sourcelat);
+                var dLong = rad(destlong - sourcelong);
+                
+                var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +Math.cos(rad(sourcelat)) * Math.cos(rad(destlat)) * Math.sin(dLong / 2) * Math.sin(dLong / 2);
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                var d = R * c;
+                return d; 
+            }
+            
+        });
+    </script>
+    <style>
+        body
+        {
+            background-image: url(images/bassck.jpg);
+            background-color: #fff;
+        }
+        #loadid
+        {
+            width: 95%;
+            margin: 50% auto;
+            margin-left: 5%;
+            vertical-align: middle;
+        }
+        #loadid img{
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loadid" class="adv_box">
+        <img src="images/Processing.gif" alt="Plz. wait loading...."/>
+    </div>
+</body>
+</html>

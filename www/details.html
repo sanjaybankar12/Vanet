@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<!--
+  * Please see the included README.md file for license terms and conditions.
+  -->
+<head>
+    <title>Blank Cordova Mobile App Project Template (Lite)</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <!-- see http://webdesign.tutsplus.com/tutorials/htmlcss-tutorials/quick-tip-dont-forget-the-viewport-meta-tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <style>
+        /* following two viewport lines are equivalent to the meta viewport statement above, needed for Windows */
+        /* see http://www.quirksmode.org/blog/archives/2014/05/html5_dev_conf.html and http://dev.w3.org/csswg/css-device-adapt/ */
+        @-ms-viewport { width: 100vw ; zoom: 100% ; }  @viewport { width: 100vw ; zoom: 100% ; }
+        @-ms-viewport { user-zoom: fixed ; }           @viewport { user-zoom: fixed ; }
+    </style>
+    <link href="css/icons.css" rel="stylesheet">
+     <link rel="stylesheet" href="css/materilize.css"/> <!-- materilize css lib file -->
+     <link rel="stylesheet" href="css/style.css"/> <!-- customecss lib file -->
+    <script src="cordova.js"></script>          <!-- phantom library, needed for Cordova api calls, added during build -->
+    <script src="js/app.js"></script>           <!-- recommended location of your JavaScript code relative to other JS files -->
+      <script src="js/jquery-2.1.1.js"></script>  
+    <script src="js/materilize.js"></script>           <!-- materilize design lib file -->
+    <script src="xdk/init-dev.js"></script>     <!-- normalizes device and document ready events, see README for details -->
+    <script src="js/db.js"></script>
+    <script>
+        $(document).ready(function()
+        {
+            document.addEventListener("deviceready",onReady,false);
+        
+            function onReady()
+            {                       
+                navigator.splashscreen.hide();
+                init_client();
+                $('select').material_select();
+                
+                getDrivingInfoByType(0);
+                document.addEventListener("backbutton",onBack,false);
+            }
+
+            function onBack()
+            {
+                window.location.href="info.html";
+            }
+            
+            $("#logout").click(function()
+            {
+                navigator.notification.confirm("Do you want to logout?",function(buttonIndex){
+                    
+                    if(buttonIndex==1)
+                    {
+                        window.location.href="login.html";
+                    }
+                    
+                },"Confirm",["Yes","No"]);
+            });
+            
+            $("#seltype").change(function()
+            {
+                var val=$(this).val();
+                getDrivingInfoByType(val);
+            });
+          
+        });
+    </script>
+    <style>
+        .hm_cvr
+        {
+            margin: 0;
+        }
+        header
+        {
+            margin: 0 auto;
+            text-align: center;
+            top:0;
+            position: fixed;
+            width: 100%;
+            height: 60px;
+            z-index: 5;
+        }
+        header i
+        {
+            float: right;
+        }
+        header h3
+        {
+            font-size: 26px;
+            font-weight: bold;
+            margin: 0;
+            padding: 4%;
+        }
+        .mid_cvr
+        {
+            width: 90%;
+            margin: 2% auto;
+            text-align: center;
+            margin-top: 80px;
+        }
+        #det_tab
+        {
+            text-align: center;
+            margin: 10% auto;
+            background-color: #fff;
+        }
+        #det_tab tr th
+        {
+            font-size: 20px;
+            font-weight: bold;
+            background-color: royalblue;
+            text-align: center;
+            color: #fff;
+        }
+        #det_tab tr
+        {
+            border-bottom: 1px solid #eee;
+        }
+        #det_tab tr td
+        {
+            text-align: center;
+            color: royalblue;
+            font-size: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hm_cvr">
+        <header class="green">
+            <div >
+                <h3>&nbsp;&nbsp;&nbsp;&nbsp;Vanet System<i id="logout" class="mdi-action-settings-power"></i></h3>
+            </div>
+        </header>
+        <section class="mid_cvr">
+            <div class="row">
+                <select id="seltype">
+                    <option value="0">Today</option>    
+                    <option value="1">Last Week</option>    
+                    <option value="2">Last Month</option>    
+                </select>
+            </div>
+            <div class="row">
+                <table id="det_tab" class="table-bordered table-centered">
+                    <thead>
+                        <tr>
+                            <th class="text-center" colspan="2"><span id="hdr"></span> Details</th>
+                        </tr>
+                    </thead>
+                    <tbody class="">
+                        <tr>
+                            <td>No. of Rides</td>
+                            <td id="rideno"></td>
+                        </tr>
+                         <tr>
+                            <td>Distance</td>
+                            <td id="dist"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+            </div>
+        </section>
+    </div>
+</body>
+</html>
+`

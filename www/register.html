@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<!--
+  * Please see the included README.md file for license terms and conditions.
+  -->
+<head>
+    <title>Blank Cordova Mobile App Project Template (Lite)</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <!-- see http://webdesign.tutsplus.com/tutorials/htmlcss-tutorials/quick-tip-dont-forget-the-viewport-meta-tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <style>
+        /* following two viewport lines are equivalent to the meta viewport statement above, needed for Windows */
+        /* see http://www.quirksmode.org/blog/archives/2014/05/html5_dev_conf.html and http://dev.w3.org/csswg/css-device-adapt/ */
+        @-ms-viewport { width: 100vw ; zoom: 100% ; }  @viewport { width: 100vw ; zoom: 100% ; }
+        @-ms-viewport { user-zoom: fixed ; }           @viewport { user-zoom: fixed ; }
+    </style>
+    <link href="css/icons.css" rel="stylesheet">
+     <link rel="stylesheet" href="css/materilize.css"/> <!-- materilize css lib file -->
+    <link rel="stylesheet" href="css/icons.css"/>
+     <link rel="stylesheet" href="css/style.css"/> <!-- customecss lib file -->
+    <script src="cordova.js"></script>          <!-- phantom library, needed for Cordova api calls, added during build -->
+    <script src="js/app.js"></script>           <!-- recommended location of your JavaScript code relative to other JS files -->
+      <script src="js/jquery-2.1.1.js"></script>  
+      <script src="js/validation/jquery.validate.min.js"></script>  
+    <script src="js/materilize.js"></script>           <!-- materilize design lib file -->
+    <script src="xdk/init-dev.js"></script>     <!-- normalizes device and document ready events, see README for details -->
+    <script src="js/db.js"></script>       
+     
+    <script>
+        $(document).ready(function()
+        {
+            document.addEventListener("deviceready",onReady,false);
+            $(".button-collapse").sideNav();
+
+            function onReady()
+            {
+                init_client();
+                    
+                 WifiWizard.setWifiEnabled(true,function(success){ },function(error){ 
+                    navigator.notification.alert("Unable to start Wifi Service automatically, Start it manually.",function(){ },"Warning","Ok");
+                });
+                
+                document.addEventListener("backbutton",onBack,false);
+            }
+
+            function onBack()
+            {
+                navigator.notification.confirm("Do you want to exit app?",onExit);
+            }
+            
+            function onExit(buttonIndex)
+            {
+                if(buttonIndex===1)
+                {
+                    WifiWizard.setWifiEnabled(false,function(success){ },function(error){ 
+                        navigator.notification.alert("Unable to stop Wifi Service automatically, Stop it manually.",function(){ },"Warning","Ok");
+                    });
+                    navigator.app.exitApp();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            
+            $("#reg_form").validate(
+            {
+                errorClass: 'validation-error', // so that it doesn't conflict with the error class of alert 
+                rules:
+                {
+                    name:
+                    {
+                        required:true
+                    },
+                    vehno:
+                    {
+                        required:true
+                    },
+                    phone:
+                    {
+                        required:true,
+                        number:true,
+                        minlength:10,
+                        maxlength:10
+                    },
+                    pass:
+                    {
+                        required:true,
+                        ispass:true
+                    },
+                    cpass:
+                    {
+                        required:true,
+                        ispass:true,
+                        isMatch:true
+                    }
+                    
+                },                
+                highlight: function(element) {
+                    $(element).closest('.space').addClass('has-error');
+                },
+                unhighlight: function(element) {
+                    $(element).closest('.space').removeClass('has-error');
+                },
+                errorElement: 'span',
+                     errorPlacement: function(error, element) {
+                 var placement = $(element).data('error');
+                 if(placement){
+                     $(placement).append(error);
+                 }
+                 else{
+                     error.insertAfter(element);
+                 }
+                },
+                messages:
+                {
+                    name:
+                    {
+                        required:" * Name is required"
+                    },
+                    vehno:
+                    {
+                        required:" * Vehciel No. is required"
+                    },
+                    phone:
+                    {
+                        required:" * Phone is required",
+                        number:" * Phone must contains digits",
+                        minlength:" * Phone no. at least contains 10 digits",
+                        maxlength:" * Phone no. contains only 10 digits"
+                    },
+                    pass:
+                    {
+                        required:"* Password is required",
+                        ispass:"* Password must be 8 character long, contains at least 1 Capital Alphabet,1 Lower Alphabet,1 Special Character"
+                    },
+                    cpass:
+                    {
+                        required:"* Confirm Password is required",
+                        ispass:"* Confirm Password is invalid",
+                        isMatch:"* Password is not match found"
+                    }
+                }
+            });
+            
+            $.validator.addMethod("ispass",function(pass)
+            {
+                    var ispass=/^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$&])[0-9A-Za-z!@#$&]{8,}$/.test(pass); 
+                    return ispass;
+            },"* Password must be 8 character long, contains at least 1 Capital Alphabet,1 Lower Alphabet,1 Special Character");
+            
+             $.validator.addMethod("isMatch",function(cpass)
+            {
+                 var pass=$("#pass").val();
+                   return cpass==pass;
+            },"* Password is not match Found");
+            
+            $("#reg_form").on('submit',function()
+            {
+                var name=$.trim($("#name").val());
+                var isname=$("#name").valid();
+                var vehno=$("#vehno").val();
+                var isvehno=$("#vehno").valid();
+                var phone=$("#phone").val();
+                var isphone=$("#phone").valid();
+                var pass=$("#pass").val();
+                var ispass=$("#pass").valid();
+                var iscpass=$("#cpass").valid();
+                
+                $("#res").text('');
+                if(isname && isvehno && isphone && ispass && iscpass)
+                {
+                    if(navigator.connection.type!==Connection.NONE)
+                    {
+                        $("#regbtn").attr("disabled","true");
+                        var uid=device.uuid;
+                        $.ajax({
+                            type:"POST",                            
+                            url:"http://www.sanjaybankar.co.in/ieeeprojects/vanetsystem/register.php",
+                            data:{"uid":uid,"name":name,"vehno":vehno,"phone":phone,"pass":pass},
+                            dataType:"json",
+                            success:function(response,testStatus,jqXHR)
+                            {       
+                                $("#regbtn").removeAttr("disabled");
+                                
+                                if(response.type=="success")
+                                {
+                                    registerUser(uid,name,phone,vehno,pass);               
+                                    $("#name").val('');
+                                    $("#vehno").val('');
+                                    $("#phone").val('');
+                                    $("#pass").val('');
+                                    $("#cpass").val('');
+                                    
+                                    $("#res").text('Your registration is successfully...!!');
+                                }
+                                else
+                                {
+                                    $("#res").text('Server is not responding,try later..!!');
+                                }
+                                
+                                window.setTimeout(function(){
+                                     $("#res").text('');
+                                },2000);
+                                
+                                return false;
+                            },
+                            error:function(response,testStatus,jqXHR)
+                            {
+                                $("#regbtn").removeAttr("disabled");
+                                $("#res").text('Server is not responding,try later..!!');
+                                 window.setTimeout(function(){
+                                     $("#res").text('');
+                                },2000);
+                                
+                                return false;
+                            }
+                        });
+                        return false;
+                    }
+                    else
+                    {
+                        $("#regbtn").removeAttr("disabled");
+                        navigator.notification.alert("Internet must to be procceed",function(){ },"Warning","OK");
+                        return false;
+                    }
+                    return false;
+                }
+                return false;
+            });
+         
+            
+        });
+    </script>
+    <style>
+        .margin
+        {
+            margin-bottom: 10px;
+        }
+        #name,#phone,#pass,#cpass,#vehno
+        {
+            margin-bottom: 5px;
+        }
+        #pass,#cpass
+        {
+            color: #fff;
+        }
+        #res
+        {
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="register_page" class="row no-margin">    
+   <div class="col s12  ">
+      <form id="reg_form" class="login-form">
+        <div class="row">
+          <div class="input-field col s12 center">
+            <h4 class="white-text">Register</h4>
+              <div id="res"></div>
+          </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12">
+            <i class="mdi-social-person-outline prefix"></i>
+            <input id="name" name="name" type="text">
+            <label for="name" class="center-align">Name</label>
+          </div>
+        </div>
+       
+        <div class="row margin">
+          <div class="input-field col s12">
+            <i class="mdi-communication-call prefix"></i>
+            <input id="phone" name="phone" type="text">
+            <label for="phone">phone</label>
+          </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12">
+            <i class="mdi-action-lock-outline prefix"></i>
+            <input id="pass" name="pass" type="password">
+            <label for="pass">Password</label>
+          </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12">
+            <i class="mdi-action-lock-outline prefix"></i>
+            <input id="cpass" name="cpass" type="password">
+            <label for="cpass">Confirm Password</label>
+          </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12">
+            <i class="mdi-maps-local-taxi prefix"></i>
+            <input id="vehno" name="vehno" type="text">
+            <label for="vehno">Vehicle Number</label>
+          </div>
+        </div>
+        <div  class="row">
+          <div style="text-align:center" class="input-field col s12 center">
+              <button id="regbtn" class="btn red" type="submit"  name="action">Register Now</button>
+          </div>
+          
+        </div>
+      </form>
+    </div>
+	   
+    </div>
+ 
+</body>
+</html>
