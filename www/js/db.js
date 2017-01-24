@@ -47,6 +47,7 @@ function loginUser(name,pass)
             if(len>0)
             {
                 localStorage.setItem("vehno",rs.rows.item(0).vehno);
+                localStorage.setItem("mobno",rs.rows.item(0).phone);
                 window.location.href="home.html";               
             }
             else

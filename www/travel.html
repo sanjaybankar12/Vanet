@@ -175,6 +175,13 @@
                 }
             });
             
+            $("#acc_but").click(function()
+            {
+                var mobno=localStorage.getItem("mobno");
+                localStorage.setItem("broadcastmsg","Accident occured, Plz help..."+mobno);
+                navigator.notification.alert("Accident information broadcast over a network.",function(){ },"Message","Ok");
+            });
+            
         });
     </script>
     <style>
@@ -251,6 +258,19 @@
             border-bottom: 1px solid green;
             background-color: #eee;
         }
+        #show_but
+        {
+            width: 80px;
+            padding: 0;
+        }
+        #acc_but
+        {
+            width: 50px;
+            padding: 0;
+        }
+        #stop_but
+        {
+        }
     </style>
 </head>
 
@@ -266,8 +286,11 @@
                 <iframe id="drivemap" src=""></iframe>
             </div>
             <div style="margin:5px auto;" class="row">
-                <button id="stop_but" type="button" class="btn red">Stop Driving</button>&nbsp;&nbsp;
-                <span id="show_but_cvr"><button id="show_but" type="button" class="btn red"><i class="mdi-communication-email prefix"></i>&nbsp;&nbsp;&nbsp;<i class="mdi-content-send prefix"></i></button></span>
+                <button id="stop_but" type="button" class="btn red">Stop Driving</button>&nbsp;
+                <span id="show_but_cvr"><button id="show_but" type="button" class="btn red"><i class="mdi-communication-email prefix"></i>&nbsp;<i class="mdi-content-send prefix"></i></button>&nbsp;
+                <button id="acc_but" type="button" class="btn red">
+                    <i class="mdi-image-adjust prefix"></i>
+                </button></span>
             </div>
             <div id="bmsg" class="white-text">
                 <p>Your Broadcasted message is visible within 40km</p>

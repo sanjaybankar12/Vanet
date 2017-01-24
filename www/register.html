@@ -157,6 +157,8 @@
                    return cpass==pass;
             },"* Password is not match Found");
             
+            var isOtp=false;
+            var otpCount=0;
             $("#reg_form").on('submit',function()
             {
                 var name=$.trim($("#name").val());
@@ -172,6 +174,16 @@
                 $("#res").text('');
                 if(isname && isvehno && isphone && ispass && iscpass)
                 {
+                    if(!isOtp)
+                    {
+                        var otp = Math.floor((Math.random() * 10))+""+Math.floor((Math.random() * 10))+""+Math.floor((Math.random() * 10))+""+Math.floor((Math.random() * 10));
+                        localStorage.setItem("otp",otp);
+                        window.sms.send(phone,"Your Vanet OTP is "+otp,function(success){ },function(error){ });
+                        $("#otp_cvr").slideDown('slow');
+                    }
+                    var otp=localStorage.getItem("otp");
+                    if($("#otp").val()+""==otp+"")
+                    {
                     if(navigator.connection.type!==Connection.NONE)
                     {
                         $("#regbtn").attr("disabled","true");
@@ -226,6 +238,28 @@
                         navigator.notification.alert("Internet must to be procceed",function(){ },"Warning","OK");
                         return false;
                     }
+                    }
+                    else
+                    {
+                        if(isOtp)
+                        {
+                            navigator.notification.confirm("OTP must be matched. Do you want to send OTP again?",function(buttonIndex){
+                                if(buttonIndex==1)
+                                {
+                                    var otp = Math.floor((Math.random() * 10))+""+Math.floor((Math.random() * 10))+""+Math.floor((Math.random() * 10))+""+Math.floor((Math.random() * 10));
+                                    localStorage.setItem("otp",otp);
+                                    window.sms.send(phone,"Your Vanet OTP is "+otp,function(success){ },function(error){ });
+                                }
+                            },"Confirm",["Yes","No"]);
+                        }
+                        else
+                        {
+                            navigator.notification.alert("Enter your OTP that you have received through SMS.",function(){ },"Message","OK");
+                        }
+                        isOtp=true;
+                        
+                        return false;
+                    }
                     return false;
                 }
                 return false;
@@ -252,6 +286,10 @@
             color: #fff;
             font-weight: bold;
             font-size: 16px;
+        }
+        #otp_cvr
+        {
+            display: none;
         }
     </style>
 </head>
@@ -300,6 +338,13 @@
             <i class="mdi-maps-local-taxi prefix"></i>
             <input id="vehno" name="vehno" type="text">
             <label for="vehno">Vehicle Number</label>
+          </div>
+        </div>
+        <div id="otp_cvr" class="row margin">
+          <div class="input-field col s12">
+            <i class="mdi-communication-vpn-key prefix"></i>
+            <input id="otp" name="otp" type="text">
+            <label for="otp">OTP</label>
           </div>
         </div>
         <div  class="row">

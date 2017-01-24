@@ -5,7 +5,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "jsapp/template-blank-cordova-project-lite/sample.zip",
       "projectGuid": "dedeb2f3-feaf-4522-a865-3701b8e90af5",
-      "lastModifiedDate": 1485237342302,
+      "lastModifiedDate": 1485246341493,
       "creationDate": 1485236669322
     },
     "XDK-app-designer": "false",
@@ -58,7 +58,8 @@
         "gitref": "",
         "name": "Device",
         "description": "Cordova Device Plugin",
-        "checksum": "2373ccea"
+        "checksum": "2373ccea",
+        "cordovaVersion": ">=3.0.0"
       },
       {
         "id": "cordova-plugin-splashscreen",
@@ -91,6 +92,7 @@
         "checksum": "7ee2b23d",
         "dependsOn": [],
         "topLevel": true,
+        "cordovaVersion": ">=3.0.0",
         "permissions": {},
         "description": "Cordova Device Motion Plugin",
         "data": {},
@@ -109,6 +111,7 @@
         "checksum": "61c62eb",
         "dependsOn": [],
         "topLevel": false,
+        "cordovaVersion": ">=3.0.0",
         "permissions": {},
         "description": "Cordova Compatibility Plugin",
         "data": {},
@@ -131,6 +134,7 @@
         "checksum": "1fdd7f27",
         "dependsOn": [],
         "topLevel": false,
+        "cordovaVersion": ">=3.0.0",
         "permissions": {
           "android:name": [
             "android.permission.WRITE_EXTERNAL_STORAGE"
@@ -158,6 +162,7 @@
           "cordova-plugin-file"
         ],
         "topLevel": true,
+        "cordovaVersion": ">=3.0.0",
         "permissions": {
           "android:name": [
             "android.permission.WRITE_EXTERNAL_STORAGE"
@@ -182,6 +187,7 @@
           "cordova-plugin-compat"
         ],
         "topLevel": true,
+        "cordovaVersion": ">=3.0.0",
         "permissions": {
           "android:name": [
             "android.permission.ACCESS_COARSE_LOCATION",
@@ -205,6 +211,7 @@
         "checksum": "9d8331a4",
         "dependsOn": [],
         "topLevel": true,
+        "cordovaVersion": ">=3.0.0",
         "permissions": {
           "android:name": [
             "android.permission.ACCESS_NETWORK_STATE"
@@ -227,6 +234,7 @@
         "checksum": "2948bc11",
         "dependsOn": [],
         "topLevel": true,
+        "cordovaVersion": ">=3.0.0",
         "permissions": {},
         "description": "Cordova Notification Plugin",
         "data": {},
@@ -289,6 +297,7 @@
         "checksum": "2c57fee1",
         "dependsOn": [],
         "topLevel": true,
+        "cordovaVersion": ">=3.0.0",
         "author": "Matt Parsons",
         "permissions": {
           "android:name": [
@@ -298,6 +307,31 @@
           ]
         },
         "description": "This plugin allows Phonegap applications to manage Wifi connections.",
+        "data": {},
+        "dependedBy": [],
+        "custom": "true"
+      },
+      {
+        "id": "com.cordova.plugins.sms",
+        "name": "Cordova SMS Plugin",
+        "version": "0.1.2",
+        "originType": "local",
+        "origin": "/E/Sanjay/Cordova Plugins/cordova-sms-plugin-master",
+        "gitref": "",
+        "paramvals": {},
+        "sourceLocation": "plugins/com.cordova.plugins.sms",
+        "selectedState": "Included",
+        "checksum": "a35abf0a",
+        "dependsOn": [],
+        "topLevel": true,
+        "cordovaVersion": ">=3.0.0",
+        "permissions": {
+          "android:name": [
+            "android.permission.SEND_SMS",
+            "android.permission.READ_PHONE_STATE"
+          ]
+        },
+        "description": "Cross-platform plugin for Cordova / PhoneGap to to easily send SMS. Available for Android and iOS.",
         "data": {},
         "dependedBy": [],
         "custom": "true"

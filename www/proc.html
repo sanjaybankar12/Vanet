@@ -30,7 +30,7 @@
             document.addEventListener("deviceready",onReady,false);
         
             function onReady()
-            {                       
+            {                    
                 navigator.splashscreen.hide();
                 init_client();
                 
@@ -59,12 +59,12 @@
                 
                 var destlong=position.coords.longitude;
                 var destlat=position.coords.latitude;
-                
+                                
                 localStorage.setItem("dest_long",destlong);
                 localStorage.setItem("dest_lat",destlat);
                 var distance=getDistance(sourcelong,sourcelat,destlong,destlat);
                 
-                var vehno=localStorage.getItem("vehno";
+                var vehno=localStorage.getItem("vehno");
                 
                 $.ajax({
                         type:"POST",
